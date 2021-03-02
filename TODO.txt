@@ -1,0 +1,7 @@
+- find good name
+	perish > .05
+
+- different sorts of persons
+- inner region with samples
+- some basic statistical simulations
+	variables?
