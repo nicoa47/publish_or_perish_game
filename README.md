@@ -10,4 +10,4 @@ gameplay components:
 - tower defense?
 
 Current state:
-![current state](current_state.png)
+![current state](current_state.PNG)
