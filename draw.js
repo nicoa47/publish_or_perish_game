@@ -82,14 +82,14 @@ function draw_circ(pos, size, filled, color, rads=[0, 2*Math.PI]) {
     ctx.closePath();
 }
 
-function draw_line(color, coords) {
+function draw_line(color, coords, lw=line_width) {
     ctx.beginPath();
     ctx.moveTo(coords[0].x, coords[0].y);
     for (i=1; i<coords.length; i++) {
         ctx.lineTo(coords[i].x, coords[i].y);
     }
     ctx.strokeStyle = color;
-    ctx.lineWidth = line_width;
+    ctx.lineWidth = lw;
     ctx.stroke();
     ctx.closePath();
 }
@@ -100,4 +100,31 @@ function draw_rect(color, pos, w, h) {
     ctx.fillStyle = color;
     ctx.fill();
     ctx.closePath();
+}
+
+function draw_debug_text(label, line=1) {
+    ctx.beginPath();
+    ctx.font = "30px Arial";
+    ctx.fillStyle = "black";
+    ctx.fillText(label, 50, line*50); 
+    // ctx.fill();
+    ctx.closePath();
+}
+
+function draw_stick_fig(pos, head_color) {
+    // head
+    draw_circ({x: pos.x, y: pos.y - (height - head_r)}, head_r, true, head_color);
+    // body
+    draw_line("black", [{x: pos.x, y: pos.y - leg_height},
+        {x: pos.x, y: pos.y - decap_height}], 2);
+    // legs
+    draw_line("black", [{x: pos.x, y: pos.y - leg_height},
+        {x: pos.x - width/2, y: pos.y}], 2);
+    draw_line("black", [{x: pos.x, y: pos.y - leg_height},
+        {x: pos.x + width/2, y: pos.y}], 2);
+    // arms
+    draw_line("black", [{x: pos.x, y: pos.y - arm_joint_height},
+        {x: pos.x - width/2, y: pos.y - arm_joint_height + leg_height}], 2);
+    draw_line("black", [{x: pos.x, y: pos.y - arm_joint_height},
+        {x: pos.x + width/2, y: pos.y - arm_joint_height + leg_height}], 2);
 }

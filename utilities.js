@@ -58,14 +58,28 @@ function coll_resolution(this_pos, this_radius, other_pos, other_radius) {
         var dist_vect = {x: other_pos.x - this_pos.x, y: other_pos.y - this_pos.y};
         var len = distance(this_pos, other_pos);
         var unit_dist_vect = {x: dist_vect.x/len, y: dist_vect.y/len};
-        var ball_overlap = Math.min(Math.min(this_radius, other_radius), (this_radius + other_radius) - len);
+        var ball_overlap = Math.min(Math.min(this_radius, other_radius), (this_radius/2 + other_radius/2) - len);
         var corr_vect = {x: unit_dist_vect.x*ball_overlap, y: unit_dist_vect.y*ball_overlap};
-        this_pos.x -= corr_vect.x;
-        this_pos.y -= corr_vect.y;
+        // catch case of complete overlap
+        if (isNaN(corr_vect.x) || isNaN(corr_vect.y)) {
+            // console.log("here")
+            this_pos.x -= 0.001;
+            this_pos.y -= 0;
+        } else {
+            this_pos.x -= corr_vect.x;
+            this_pos.y -= corr_vect.y;
+        }
+        
     }
     return this_pos;
 }
 
+function coord_from_angle_pos_dist(angle, pos, dist) {
+    return {
+        x: pos.x + dist*Math.cos(angle),
+        y: pos.y + dist*Math.sin(angle)
+    };
+}
 
 
 
@@ -77,7 +91,7 @@ function coll_resolution(this_pos, this_radius, other_pos, other_radius) {
 // global vars
 var center_coord = {x: canv_w/2, y: canv_h/2};
 var gravity = 30;
-var n_simulation_steps = 1;
+// var n_simulation_steps = 1;
 // debug version:
 var friction = 0.95;
 var vel_factor = 0.05;

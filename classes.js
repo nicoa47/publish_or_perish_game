@@ -8,6 +8,7 @@ class Participant {
         this.ind = ind;
         this.door_pos_meet = {x: 0, y: 0}; // debug
         this.dragged = false; // debug
+        this.angle = Math.random()*(2*Math.PI);
     }
     collision_detect() {
         // identify virtual circle depending on x and y values
@@ -105,7 +106,9 @@ class Participant {
             for (let i = 0; i < participant_collisions.length; i++) {
                 const cp = participant_collisions[i];
                 var new_pos = coll_resolution(this.pos, this.radius, cp, this.radius);
+                // console.log(distance(this.old_pos, this.pos))
                 this.pos.x = new_pos.x; this.pos.y = new_pos.y;
+                
             }
             
         }
@@ -135,22 +138,36 @@ class Participant {
             this.old_pos = {x: this.pos.x, y: this.pos.y};
         } else {
 
-            var xstep = Math.floor(Math.random()*3) - 1;
-            var ystep = Math.floor(Math.random()*3) - 1;
-            this.pos.x += xstep;
-            this.pos.y += ystep;
-            if (this.pos.x > canvas.width) {
-                this.pos.x -= 1;
-            }
-            if (this.pos.y > canvas.height) {
-                this.pos.y -= 1;
-            }
-            if (this.pos.x < 0) {
-                this.pos.x += 1;
-            }
-            if (this.pos.y < 0) {
-                this.pos.y += 1;
-            }
+            // TODO: make random movement according to vector direction
+
+            // get random direction (angle)
+            // this.angle = (this.angle + (Math.random()*2*participant_turn_speed - participant_turn_speed)) % (Math.PI) + 0.5*Math.PI;
+            this.angle = (Math.PI + Math.random()*4*Math.PI  - 2*Math.PI);
+
+            // calculate new position
+            this.pos = coord_from_angle_pos_dist(this.angle, this.pos, participant_speed);
+            // keep on screen vertically
+            if (this.pos.y < 0) this.pos.y = 0;
+            if (this.pos.y > canvas.height) this.pos.y = canvas.height;
+
+            // TODO don't lose them to top or bottom of screen (correct if this is the case)
+
+            // var xstep = Math.floor(Math.random()*3) - 1;
+            // var ystep = Math.floor(Math.random()*3) - 1;
+            // this.pos.x += xstep;
+            // this.pos.y += ystep;
+            // if (this.pos.x > canvas.width) {
+            //     this.pos.x -= 1;
+            // }
+            // if (this.pos.y > canvas.height) {
+            //     this.pos.y -= 1;
+            // }
+            // if (this.pos.x < 0) {
+            //     this.pos.x += 1;
+            // }
+            // if (this.pos.y < 0) {
+            //     this.pos.y += 1;
+            // }
 
         }
 
@@ -159,7 +176,8 @@ class Participant {
 
     }
     render() {
-        draw_circ({x: this.pos.x, y: this.pos.y}, this.radius, true, this.color);
+        // draw_circ({x: this.pos.x, y: this.pos.y}, this.radius, true, this.color);
+        draw_stick_fig(this.pos, this.color);
 
         // debug: show virtual circs
         // for (let i = 0; i < this.virtual_circs.length; i++) {
@@ -187,12 +205,8 @@ class Door {
         this.during_animation = false;
     }
     get_coords() {
-        var coord1 = door_hinge_pos;
-        var coord2 = {
-            x: coord1.x + door_length*Math.cos(this.angle),
-            y: coord1.y + door_length*Math.sin(this.angle)
-        };
-        return [coord1, coord2];
+        var coord2 = coord_from_angle_pos_dist(this.angle, door_hinge_pos, door_length);
+        return [door_hinge_pos, coord2];
     }
     change_state_animation() {
         if (!this.during_animation) {

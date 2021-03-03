@@ -35,7 +35,11 @@ var sample_container = new SampleContainer();
 
 // global functions
 
+cd_1 = new Date();
+cd_2 = new Date();
+
 function update() {
+    cd_1 = new Date();
     for (let i = 0; i < participant_pool.length; i++) {
         const participant = participant_pool[i];
         participant.update();
@@ -53,6 +57,8 @@ function render() {
         participant.render();
     }
     door.render();
+    cd_2 = new Date();
+    draw_debug_text("FPS: " + String(1000 / (cd_2 - cd_1)));
 }
 
 // listener functions
